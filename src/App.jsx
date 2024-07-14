@@ -9,13 +9,17 @@ import Home from "./Views/Home";
 import SignUp from "./Views/SignUp";
 import Login from "./Views/Login";
 import DashBoard from "./Views/DashBoard";
+
+
 import PropTypes from "prop-types";
 
 import "./index.css";
+import Statistics from "./Views/Statistics";
+import Profile from "./Views/Profile";
 
 
 const PrivateRoute = ({ element }) => {
- const authenticated = localStorage.getItem("auth");
+  const authenticated = localStorage.getItem("auth");
 
   return authenticated ? element : <Navigate to="/login" replace />;
 };
@@ -35,7 +39,10 @@ const App = () => {
           exact
           path="/dashboard"
           element={<PrivateRoute element={<DashBoard />} />}
-        />
+        >
+          <Route path="stats" element={<Statistics />} />
+          <Route path="profile" element={<Profile />} />
+        </Route>
       </Routes>
     </Router>
   );
