@@ -41,7 +41,7 @@ const SignUp = () => {
       setEmail("");
       setName("");
       setPassword("");
-      navigate("/dashboard");
+      navigate("/dashboard/stats");
     } catch (error) {
       console.error("Error submitting form:", error);
       openNotificationError(error.response.data.message);

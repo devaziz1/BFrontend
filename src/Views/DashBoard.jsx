@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { FaBars } from "react-icons/fa"; // Import an icon from react-icons
 
@@ -18,6 +18,10 @@ const Dashboard = () => {
     navigate(option.path);
     setSidebarOpen(false); // Close sidebar on navigation
   };
+
+  useEffect(() => {
+    navigate("/dashboard/stats");
+  }, []);
 
   return (
     <div className="flex h-screen">

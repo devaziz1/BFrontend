@@ -38,7 +38,7 @@ const Login = () => {
       console.log("Form submitted successfully!");
       setEmail("");
       setPassword("");
-      navigate("/dashboard");
+      navigate("/dashboard/stats");
     } catch (error) {
       console.error("Error submitting form:", error);
       openNotificationError(error.response.data.message);
