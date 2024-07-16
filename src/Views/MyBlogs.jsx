@@ -4,6 +4,7 @@ import {
   Form,
   Input,
   Menu,
+  message,
   Modal,
   Pagination,
   Select,
@@ -18,15 +19,14 @@ import { CloseCircleIcon } from "../assets/Icons/Icons";
 import TextArea from "antd/es/input/TextArea";
 import axios from "axios";
 import { validationRules } from "../utils/Validation";
-import Search from "antd/es/transfer/search";
+
 import { DeleteIcon, EditIcon, MenuDotsIcon } from "../assets/Icons/Icons";
 import moment from "moment";
 
 import { truncateDescription } from "../utils/truncate";
 import { ExclamationCircleFilled } from "@ant-design/icons";
+import Search from "antd/es/transfer/search";
 const { confirm } = Modal;
-
-
 const MyBlogs = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -44,6 +44,16 @@ const MyBlogs = () => {
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("");
   const [selectedBlogID, setSelectedBlogID] = useState("");
+  const [sort, setSort] = useState("latest");
+  
+  // ---- Success popup -----------
+  const [api, contextHolder] = message.useMessage();
+  const openNotification = (m) => {
+    api.open({
+      type: "success",
+      content: m,
+    });
+  };
 
   const getBlogCount = async () => {
     const config = {
@@ -68,7 +78,7 @@ const MyBlogs = () => {
     const config = {
       url: `http://localhost:3000/api/Blog/getBlogsByUserId/${localStorage.getItem(
         "ID"
-      )}?page=${page}&limit=5`,
+      )}?sort=${sort}&page=${page}&limit=10`,
       method: "GET",
     };
 
@@ -82,7 +92,7 @@ const MyBlogs = () => {
         title: blog.title,
         description: blog.content,
         Status: blog.hide ? "hide" : "unhide",
-        createdAt: blog.createdAt,
+        CreatedAt: blog.createdAt,
       }));
 
       setBlogData({
@@ -104,6 +114,28 @@ const MyBlogs = () => {
 
   const handleCategoryChange = (category) => {
     setCategory(category);
+  };
+
+  // ------- search ------------
+  const SearchBar = async (title) => {
+    console.log("Titile in side API call");
+    console.log(title);
+    const config = {
+      url: `http://localhost:3000/api/Blog/search/${title}?id=${localStorage.getItem(
+        "id"
+      )}`,
+      method: "GET",
+    };
+
+    try {
+      const response = await axios(config);
+      console.log("search reasults for user");
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    } finally {
+      console.log("Inside finally");
+    }
   };
 
   //-------- Create Blog Functions --------------
@@ -134,6 +166,8 @@ const MyBlogs = () => {
       form.setFieldValue("content", "");
       form.setFieldValue("category", "");
       getBlogCount();
+      getBlogByUser();
+      openNotification("Blog created successfully!");
       setIsModalOpen(false);
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -183,6 +217,7 @@ const MyBlogs = () => {
       form.setFieldsValue("content", "");
       form.setFieldsValue("category", "");
       getBlogByUser();
+      openNotification("Blog updated successfully!");
       setIsEditModalOpen(false);
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -210,6 +245,51 @@ const MyBlogs = () => {
       console.log(response.data);
       getBlogByUser();
       getBlogCount();
+      openNotification("Blog deleted successfully!");
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    } finally {
+      setIsButtonLoading(false);
+    }
+  };
+
+  // ------ Hide Function -------------
+
+  const handleHideBlog = async () => {
+    const config = {
+      url: `http://localhost:3000/api/Blog/hideblog/${selectedBlogID}`,
+      method: "PATCH",
+    };
+
+    try {
+      const response = await axios(config);
+
+      console.log(response.data);
+      getBlogByUser();
+      getBlogCount();
+      openNotification("Blog Hide successfully!");
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    } finally {
+      setIsButtonLoading(false);
+    }
+  };
+
+  // ------ Un Hide Function -------------
+
+  const handleUnHideBlog = async () => {
+    const config = {
+      url: `http://localhost:3000/api/Blog/UnHideblog/${selectedBlogID}`,
+      method: "PATCH",
+    };
+
+    try {
+      const response = await axios(config);
+
+      console.log(response.data);
+      getBlogByUser();
+      getBlogCount();
+      openNotification("Blog un hide successfully!");
     } catch (error) {
       console.error("Error submitting form:", error);
     } finally {
@@ -234,6 +314,37 @@ const MyBlogs = () => {
         },
       });
     };
+
+    const showHideBlogMessage = () => {
+      confirm({
+        title: `Are you sure to hide this Blog?`,
+        icon: <ExclamationCircleFilled />,
+        okText: "Yes",
+        okType: "danger",
+        cancelText: "No",
+        onOk: async () => {
+          setIsButtonLoading(true);
+          await handleHideBlog();
+          setIsButtonLoading(false);
+        },
+      });
+    };
+
+    const showUnHideBlogMessage = () => {
+      confirm({
+        title: `Are you sure to un-Hide this Blog?`,
+        icon: <ExclamationCircleFilled />,
+        okText: "Yes",
+        okType: "danger",
+        cancelText: "No",
+        onOk: async () => {
+          setIsButtonLoading(true);
+          await handleUnHideBlog();
+          setIsButtonLoading(false);
+        },
+      });
+    };
+
     const items = [
       {
         label: (
@@ -249,11 +360,35 @@ const MyBlogs = () => {
       },
       {
         label: (
+          <div onClick={showHideBlogMessage} className="ms-2">
+            Hide
+          </div>
+        ),
+        key: "1",
+        icon: <EditIcon />,
+      },
+      {
+        type: "divider",
+      },
+      {
+        label: (
+          <div onClick={showUnHideBlogMessage} className="ms-2">
+            Un Hide
+          </div>
+        ),
+        key: "2",
+        icon: <EditIcon />,
+      },
+      {
+        type: "divider",
+      },
+      {
+        label: (
           <div onClick={showDeleteBlogMessage} className="ms-2">
             Delete
           </div>
         ),
-        key: "2",
+        key: "3",
         icon: <DeleteIcon />,
       },
     ];
@@ -269,6 +404,42 @@ const MyBlogs = () => {
         </Dropdown>
       </div>
     );
+  };
+
+  const SearchByCategory = async (category) => {
+    console.log("category in side API call");
+    console.log(category);
+    const config = {
+      url: `http://localhost:3000/api/Blog/searchByCategoryForUser?category=${category}&userId=${localStorage.getItem(
+        "ID"
+      )}`,
+      method: "GET",
+    };
+
+    try {
+      const response = await axios(config);
+      console.log("search reasults by category");
+      console.log(response.data);
+
+      const transformedBlogs = response.data
+        .slice()
+        .reverse()
+        .map((blog) => ({
+          id: blog._id,
+          title: blog.title,
+          description: blog.content,
+          Status: blog.hide ? "hide" : "unhide",
+          CreatedAt: blog.createdAt,
+        }));
+
+      setBlogData({
+        blogs: transformedBlogs,
+      });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    } finally {
+      console.log("Inside finally");
+    }
   };
 
   const COLUMNS = [
@@ -329,14 +500,28 @@ const MyBlogs = () => {
     },
   ];
 
+  const onSearch = (value) => {
+    console.log(value);
+    SearchBar(value);
+  };
+
+  const handleSortChange = (value) => {
+    setSort(value);
+  };
+
+  useEffect(() => {
+    getBlogCount();
+  }, []);
+
   useEffect(() => {
     getBlogCount();
     getBlogByUser();
-  }, []);
+  }, [page, sort]);
 
   return (
     <>
       <div className="grid grid-cols-12 gap-4">
+        {contextHolder}
         <div className="flex justify-between mx-5 col-span-12 mt-2">
           <h3 className="text-2xl font-semibold">My Blogs</h3>
           <Button onClick={showModal}>Create New Blog</Button>
@@ -360,11 +545,13 @@ const MyBlogs = () => {
             placeholder="Search Blog"
             allowClear
             enterButton="Search"
+            onSearch={onSearch}
             size="large"
           />
           <Select
             style={{ minWidth: 150 }}
             placeholder="Category"
+            onChange={SearchByCategory}
             options={[
               { value: "Technology", label: "Technology" },
               { value: "Sports", label: "Sports" },
@@ -376,8 +563,9 @@ const MyBlogs = () => {
           <Select
             style={{ minWidth: 150 }}
             placeholder="Sort By"
+            onChange={handleSortChange}
             options={[
-              { value: "Latest", label: "Latest" },
+              { value: "latest", label: "latest" },
               { value: "Oldest", label: "Oldest" },
             ]}
           />
@@ -403,7 +591,7 @@ const MyBlogs = () => {
         <Pagination
           className="mb-5 mt-5 col-start-4 md:col-start-6 col-span-6"
           current={page}
-          total={blogData.totalPages}
+          total={blogData.totalBlogs}
           onChange={handlePageChange}
         />
         <Modal

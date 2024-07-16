@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import { FaBars } from "react-icons/fa"; // Import an icon from react-icons
+import { FaBars } from "react-icons/fa"; 
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -29,7 +29,8 @@ const Dashboard = () => {
      className="flex">
       {/* Sidebar */}
       <div
-        className={`fixed inset-y-0 h-screen left-0 bg-blue-100 p-4 transition-transform transform ${
+      
+        className={`fixed inset-y-0  left-0 bg-blue-100   p-4 transition-transform transform ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } md:relative md:translate-x-0 md:col-span-3 md:block`}
       >

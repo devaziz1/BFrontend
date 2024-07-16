@@ -69,7 +69,7 @@ const Statistics = () => {
   });
 
   return (
-    <div className="grid grid-cols-12">
+    <div className="grid grid-cols-12 h-screen">
       <div className="flex justify-between mx-5 col-span-12 mt-2">
         <h3 className="text-2xl font-semibold">Statistics</h3>
         <Button >Create New Blog</Button>

@@ -85,9 +85,9 @@ export const COLUMNS = [
     },
   },
   {
-    title: "Created At",
-    dataIndex: "appliedDate",
-    key: "applied-date",
+    title: "CreatedAt",
+    dataIndex: "CreatedAt",
+    key: "CreatedAt",
     render: (value) => {
       return moment(value).format("DD MMM YYYY");
     },
