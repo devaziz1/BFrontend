@@ -1,3 +1,4 @@
+import { Button } from 'antd';
 import  { useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
 
@@ -68,10 +69,13 @@ const Statistics = () => {
   });
 
   return (
-    <div>
-      <div id="chart" className='mt-5'>
+    <div className="grid grid-cols-12">
+      <div className="flex justify-between mx-5 col-span-12 mt-2">
+        <h3 className="text-2xl font-semibold">Statistics</h3>
+        <Button >Create New Blog</Button>
+      </div>
+      <div id="chart" className="mt-5 col-span-12">
         <ReactApexChart
-        
           options={options}
           series={series}
           type="bar"

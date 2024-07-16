@@ -25,10 +25,11 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="flex h-screen">
+    <div
+     className="flex">
       {/* Sidebar */}
       <div
-        className={`fixed inset-y-0 left-0 bg-blue-100 p-4 transition-transform transform ${
+        className={`fixed inset-y-0 h-screen left-0 bg-blue-100 p-4 transition-transform transform ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } md:relative md:translate-x-0 md:col-span-3 md:block`}
       >

@@ -1,22 +1,23 @@
-import { SendIcon } from "../assets/Icons/Icons";
+import { DeleteIcon, EditIcon, MenuDotsIcon, } from "../assets/Icons/Icons";
 import { Button, Dropdown, Menu, Space, Tag, Typography } from "antd";
 import moment from "moment";
-import { faker } from "@faker-js/faker";
 import { useNavigate } from "react-router-dom";
 import { truncateDescription } from "../utils/truncate";
 
 const ActionsColumn = () => {
   const navigate = useNavigate();
 
+
+
   const items = [
     {
       label: (
         <div onClick={() => navigate(``)} className="ms-2">
-          View Details
+          Edit 
         </div>
       ),
       key: "0",
-      icon: <SendIcon />,
+      icon: <EditIcon />,
     },
     {
       type: "divider",
@@ -24,7 +25,7 @@ const ActionsColumn = () => {
     {
       label: <div className="ms-2">Delete</div>,
       key: "2",
-      icon: <SendIcon />,
+      icon: <DeleteIcon />,
     },
   ];
 
@@ -35,7 +36,7 @@ const ActionsColumn = () => {
         trigger={["click"]}
         placement="bottomRight"
       >
-        <Button shape="circle" type="text" icon={<SendIcon />}></Button>
+        <Button shape="circle" type="text" icon={<MenuDotsIcon />}></Button>
       </Dropdown>
     </div>
   );
@@ -45,9 +46,9 @@ export const COLUMNS = [
   {
     title: "Title",
     key: "title",
-    render: (_, { name }) => (
+    render: (_, { title }) => (
       <Space>
-        <Typography.Text>{name}</Typography.Text>
+        <Typography.Text>{title}</Typography.Text>
       </Space>
     ),
   },
@@ -99,22 +100,3 @@ export const COLUMNS = [
   },
 ];
 
-export const DATA = [
-  ...new Array(10).fill(null).map(() => ({
-    key: faker.database.mongodbObjectId(),
-    profilePic: faker.image.avatar(),
-    name: faker.person.fullName(),
-    description: faker.lorem.sentence(30),
-    job: faker.company.name(),
-    Status: faker.helpers.arrayElement([
-      "hide",
-      "unhide"
-    ]),
-    appliedDate: moment().toISOString(),
-  })),
-];
-
-export const PAGINATION = {
-  position: ["bottomCenter"],
-  pageSize: 5,
-};
