@@ -1,8 +1,9 @@
-import { Card, Input, Skeleton } from "antd";
+import { Card, Input, Select, Skeleton } from "antd";
 import { useNavigate } from "react-router-dom";
 import { SendIcon } from "../assets/Icons/Icons";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Search from "antd/es/input/Search";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -45,6 +46,46 @@ const Home = () => {
     }
   };
 
+  const SearchByTitle = async (title) => {
+    console.log("Titile in side API call");
+    console.log(title);
+    const config = {
+      url: `http://localhost:3000/api/Blog/searchByTitle/${title}`,
+      method: "GET",
+    };
+
+    try {
+      const response = await axios(config);
+      console.log("search reasults");
+      console.log(response.data);
+      setBlogData(response.data);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    } finally {
+      console.log("Inside finally");
+    }
+  };
+
+  const SearchByCategory = async (category) => {
+    console.log("category in side API call");
+    console.log(category);
+    const config = {
+      url: `http://localhost:3000/api/Blog/searchByCategory/${category}`,
+      method: "GET",
+    };
+
+    try {
+      const response = await axios(config);
+      console.log("search reasults by category");
+      console.log(response.data);
+      setBlogData(response.data);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    } finally {
+      console.log("Inside finally");
+    }
+  };
+
   const CommentOnBlog = async (blogId, content) => {
     console.log("Inside Comment On Blog API Call");
     console.log(blogId, content);
@@ -66,6 +107,11 @@ const Home = () => {
     } finally {
       console.log("Inside finally");
     }
+  };
+
+  const onSearch = (value) => {
+    console.log(value);
+    SearchByTitle(value);
   };
 
   useEffect(() => {
@@ -101,6 +147,27 @@ const Home = () => {
             <h3 className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-500 flex justify-center font-bold text-2xl">
               Gup Shup
             </h3>
+          </div>
+          <div className="flex gap-2 items-center">
+            <Search
+              placeholder="Search Blog"
+              allowClear
+              enterButton="Search"
+              size="large"
+              onSearch={onSearch}
+            />
+            <Select
+              style={{ minWidth: 150 }}
+              placeholder="Category"
+              onChange={SearchByCategory}
+              options={[
+                { value: "Technology", label: "Technology" },
+                { value: "Sports", label: "Sports" },
+                { value: "Business", label: "Business" },
+                { value: "Health", label: "Health" },
+                { value: "Entertainment", label: "Entertainment" },
+              ]}
+            />
           </div>
           <div className="flex gap-3 items-center">
             <button

@@ -34,8 +34,7 @@ const Login = () => {
     try {
       const response = await axios(config);
       localStorage.setItem("auth", "true");
-      console.log(response.data);
-      console.log("Form submitted successfully!");
+      localStorage.setItem("ID", response.data._id);
       setEmail("");
       setPassword("");
       navigate("/dashboard/stats");

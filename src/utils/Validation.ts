@@ -1,4 +1,3 @@
-
 export const validationRules = {
   email: [
     { required: true, message: "Email is required" },
@@ -18,7 +17,6 @@ export const validationRules = {
     { min: 3, message: "Password must be at least 6 characters long" },
     {
       validator: (_, value) => {
-        
         if (!/[a-z]/.test(value) || !/[A-Z]/.test(value)) {
           return Promise.reject(
             new Error(
@@ -40,4 +38,18 @@ export const validationRules = {
       message: "Name must contain only alphabetic characters",
     },
   ],
+
+  title: [
+    { required: true, message: "Title is required" },
+    { max: 40, message: "Name must be at most 40 characters long" },
+    { min: 1, message: "Name must be at least 1 characters long" },
+  ],
+
+  descrption: [
+    { required: true, message: "Content is required" },
+    { max: 200, message: "Name must be at most 200 characters long" },
+    { min: 1, message: "Name must be at least 1 characters long" },
+  ],
+
+  category: [{ required: true, message: "Category is required" }],
 };

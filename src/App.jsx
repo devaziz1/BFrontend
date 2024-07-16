@@ -16,6 +16,7 @@ import PropTypes from "prop-types";
 import "./index.css";
 import Statistics from "./Views/Statistics";
 import Profile from "./Views/Profile";
+import MyBlogs from "./Views/MyBlogs";
 
 
 const PrivateRoute = ({ element }) => {
@@ -42,6 +43,7 @@ const App = () => {
         >
           <Route path="stats" element={<Statistics />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="blogs" element={<MyBlogs />} />
         </Route>
       </Routes>
     </Router>
