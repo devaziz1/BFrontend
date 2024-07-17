@@ -1,4 +1,4 @@
-import { Button } from 'antd';
+import {  Select } from 'antd';
 import  { useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
 
@@ -72,7 +72,15 @@ const Statistics = () => {
     <div className="grid grid-cols-12 h-screen">
       <div className="flex justify-between mx-5 col-span-12 mt-2">
         <h3 className="text-2xl font-semibold">Statistics</h3>
-        <Button >Create New Blog</Button>
+        <Select
+          style={{ minWidth: 150 }}
+          placeholder="Data"
+          options={[
+            { value: "Daily", label: "Daily" },
+            { value: "Monthly", label: "Monthly" },
+            { value: "Yearly", label: "Yearly" },
+          ]}
+        />
       </div>
       <div id="chart" className="mt-5 col-span-12">
         <ReactApexChart

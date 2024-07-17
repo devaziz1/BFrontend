@@ -148,8 +148,9 @@ const Home = () => {
               Gup Shup
             </h3>
           </div>
-          <div className="flex gap-2 items-center">
+          <div className=" flex gap-2 items-center">
             <Search
+              className="hidden lg:block"
               placeholder="Search Blog"
               allowClear
               enterButton="Search"
@@ -157,6 +158,7 @@ const Home = () => {
               onSearch={onSearch}
             />
             <Select
+              className="hidden lg:block"
               style={{ minWidth: 150 }}
               placeholder="Category"
               onChange={SearchByCategory}
@@ -186,6 +188,27 @@ const Home = () => {
           </div>
         </nav>
       </header>
+      <div className=" lg:hidden flex gap-2 items-center w-full ml-5 mr-5">
+        <Search
+          placeholder="Search Blog"
+          allowClear
+          enterButton="Search"
+          size="large"
+          onSearch={onSearch}
+        />
+        <Select
+          style={{ minWidth: 150 }}
+          placeholder="Category"
+          onChange={SearchByCategory}
+          options={[
+            { value: "Technology", label: "Technology" },
+            { value: "Sports", label: "Sports" },
+            { value: "Business", label: "Business" },
+            { value: "Health", label: "Health" },
+            { value: "Entertainment", label: "Entertainment" },
+          ]}
+        />
+      </div>
       <main className="grid grid-cols-12">
         <h3 className="col-span-12 md:col-start-4 md:col-span-7 lg:col-start-4 lg:col-span-6 flex items-center justify-center font-semibold text-3xl mb-2 mt-2">
           Explore Our Latest Blog
@@ -230,66 +253,72 @@ const Home = () => {
           </>
         ) : (
           <>
-            {blogData.map((blog) => (
-              <Card
-                key={blog._id}
-                style={{
-                  border: "1px solid #0096FF",
-                }}
-                className="col-span-12 md:col-start-4 md:col-span-7 lg:col-start-4 lg:col-span-6 shadow-md mb-5 mx-5 md:mx-0"
-              >
-                <div className="flex gap-2">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="w-7 h-7"
+            {blogData.length > 0 ? (
+              <>
+                {blogData.map((blog) => (
+                  <Card
+                    key={blog._id}
+                    style={{
+                      border: "1px solid #0096FF",
+                    }}
+                    className="col-span-12 md:col-start-4 md:col-span-7 lg:col-start-4 lg:col-span-6 shadow-md mb-5 mx-5 md:mx-0"
                   >
-                    <path d="M12 2A10.13 10.13 0 002 12a10 10 0 004 7.92V20h.1a9.7 9.7 0 0011.8 0h.1v-.08A10 10 0 0022 12 10.13 10.13 0 0012 2zM8.07 18.93A3 3 0 0111 16.57h2a3 3 0 012.93 2.36 7.75 7.75 0 01-7.86 0zm9.54-1.29A5 5 0 0013 14.57h-2a5 5 0 00-4.61 3.07A8 8 0 014 12a8.1 8.1 0 018-8 8.1 8.1 0 018 8 8 8 0 01-2.39 5.64z" />
-                    <path d="M12 6a3.91 3.91 0 00-4 4 3.91 3.91 0 004 4 3.91 3.91 0 004-4 3.91 3.91 0 00-4-4zm0 6a1.91 1.91 0 01-2-2 1.91 1.91 0 012-2 1.91 1.91 0 012 2 1.91 1.91 0 01-2 2z" />
-                  </svg>
-                  <h1 className="text-xl font-bold ">{blog.user.name}</h1>
-                </div>
-                <div className="mt-2 ml-1 text-base ">{blog.title}</div>
-                <div className="mt-2 ml-1 text-base ">{blog.content}</div>
+                    <div className="flex gap-2">
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        className="w-7 h-7"
+                      >
+                        <path d="M12 2A10.13 10.13 0 002 12a10 10 0 004 7.92V20h.1a9.7 9.7 0 0011.8 0h.1v-.08A10 10 0 0022 12 10.13 10.13 0 0012 2zM8.07 18.93A3 3 0 0111 16.57h2a3 3 0 012.93 2.36 7.75 7.75 0 01-7.86 0zm9.54-1.29A5 5 0 0013 14.57h-2a5 5 0 00-4.61 3.07A8 8 0 014 12a8.1 8.1 0 018-8 8.1 8.1 0 018 8 8 8 0 01-2.39 5.64z" />
+                        <path d="M12 6a3.91 3.91 0 00-4 4 3.91 3.91 0 004 4 3.91 3.91 0 004-4 3.91 3.91 0 00-4-4zm0 6a1.91 1.91 0 01-2-2 1.91 1.91 0 012-2 1.91 1.91 0 012 2 1.91 1.91 0 01-2 2z" />
+                      </svg>
+                      <h1 className="text-xl font-bold ">{blog.user.name}</h1>
+                    </div>
+                    <div className="mt-2 ml-1 text-base ">{blog.title}</div>
+                    <div className="mt-2 ml-1 text-base ">{blog.content}</div>
 
-                <div className="mt-1 ml-1 flex gap-1 items-center">
-                  <svg
-                    viewBox="0 0 1024 1024"
-                    fill="currentColor"
-                    className="w-5 h-5 cursor-pointer"
-                    onClick={() => likeBlog(blog._id)}
-                  >
-                    <path d="M923 283.6a260.04 260.04 0 00-56.9-82.8 264.4 264.4 0 00-84-55.5A265.34 265.34 0 00679.7 125c-49.3 0-97.4 13.5-139.2 39-10 6.1-19.5 12.8-28.5 20.1-9-7.3-18.5-14-28.5-20.1-41.8-25.5-89.9-39-139.2-39-35.5 0-69.9 6.8-102.4 20.3-31.4 13-59.7 31.7-84 55.5a258.44 258.44 0 00-56.9 82.8c-13.9 32.3-21 66.6-21 101.9 0 33.3 6.8 68 20.3 103.3 11.3 29.5 27.5 60.1 48.2 91 32.8 48.9 77.9 99.9 133.9 151.6 92.8 85.7 184.7 144.9 188.6 147.3l23.7 15.2c10.5 6.7 24 6.7 34.5 0l23.7-15.2c3.9-2.5 95.7-61.6 188.6-147.3 56-51.7 101.1-102.7 133.9-151.6 20.7-30.9 37-61.5 48.2-91 13.5-35.3 20.3-70 20.3-103.3.1-35.3-7-69.6-20.9-101.9zM512 814.8S156 586.7 156 385.5C156 283.6 240.3 201 344.3 201c73.1 0 136.5 40.8 167.7 100.4C543.2 241.8 606.6 201 679.7 201c104 0 188.3 82.6 188.3 184.5 0 201.2-356 429.3-356 429.3z" />
-                  </svg>
-                  <div>{blog.likeCount}</div>
-                </div>
-                {blog.comments.map((comment) => (
-                  <div key={comment._id} className="mt-1">
-                    {comment.content}
-                  </div>
+                    <div className="mt-1 ml-1 flex gap-1 items-center">
+                      <svg
+                        viewBox="0 0 1024 1024"
+                        fill="currentColor"
+                        className="w-5 h-5 cursor-pointer"
+                        onClick={() => likeBlog(blog._id)}
+                      >
+                        <path d="M923 283.6a260.04 260.04 0 00-56.9-82.8 264.4 264.4 0 00-84-55.5A265.34 265.34 0 00679.7 125c-49.3 0-97.4 13.5-139.2 39-10 6.1-19.5 12.8-28.5 20.1-9-7.3-18.5-14-28.5-20.1-41.8-25.5-89.9-39-139.2-39-35.5 0-69.9 6.8-102.4 20.3-31.4 13-59.7 31.7-84 55.5a258.44 258.44 0 00-56.9 82.8c-13.9 32.3-21 66.6-21 101.9 0 33.3 6.8 68 20.3 103.3 11.3 29.5 27.5 60.1 48.2 91 32.8 48.9 77.9 99.9 133.9 151.6 92.8 85.7 184.7 144.9 188.6 147.3l23.7 15.2c10.5 6.7 24 6.7 34.5 0l23.7-15.2c3.9-2.5 95.7-61.6 188.6-147.3 56-51.7 101.1-102.7 133.9-151.6 20.7-30.9 37-61.5 48.2-91 13.5-35.3 20.3-70 20.3-103.3.1-35.3-7-69.6-20.9-101.9zM512 814.8S156 586.7 156 385.5C156 283.6 240.3 201 344.3 201c73.1 0 136.5 40.8 167.7 100.4C543.2 241.8 606.6 201 679.7 201c104 0 188.3 82.6 188.3 184.5 0 201.2-356 429.3-356 429.3z" />
+                      </svg>
+                      <div>{blog.likeCount}</div>
+                    </div>
+                    {blog.comments.map((comment) => (
+                      <div key={comment._id} className="mt-1">
+                        {comment.content}
+                      </div>
+                    ))}
+                    <div className="flex justify-between items-center gap-2">
+                      <Input
+                        variant="borderless"
+                        value={comments[blog._id] || ""}
+                        onKeyDown={(e) => handleKeyDown(e, blog._id)}
+                        onChange={(e) =>
+                          handleCommentChange(blog._id, e.target.value)
+                        }
+                        className="w-full rounded-md mt-2 bg-slate-100"
+                        placeholder="Add comment"
+                      />
+                      <div
+                        className="mt-2 cursor-pointer"
+                        onClick={() =>
+                          handleCommentChange(blog._id, comments[blog._id])
+                        }
+                      >
+                        <SendIcon />
+                      </div>
+                    </div>
+                  </Card>
                 ))}
-                <div className="flex justify-between items-center gap-2">
-                  <Input
-                    variant="borderless"
-                    value={comments[blog._id] || ""}
-                    onKeyDown={(e) => handleKeyDown(e, blog._id)}
-                    onChange={(e) =>
-                      handleCommentChange(blog._id, e.target.value)
-                    }
-                    className="w-full rounded-md mt-2 bg-slate-100"
-                    placeholder="Add comment"
-                  />
-                  <div
-                    className="mt-2 cursor-pointer"
-                    onClick={() =>
-                      handleCommentChange(blog._id, comments[blog._id])
-                    }
-                  >
-                    <SendIcon />
-                  </div>
-                </div>
-              </Card>
-            ))}
+              </>
+            ) : (
+              <p>No Blogs Uploaded Yet</p>
+            )}
           </>
         )}
       </main>

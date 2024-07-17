@@ -1,6 +1,6 @@
 import { Button, Card, Form, Input, message } from "antd";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { validationRules } from "../utils/Validation";
@@ -46,6 +46,10 @@ const Login = () => {
     }
   };
 
+  useEffect(() => {
+    localStorage.removeItem("ID");
+    localStorage.removeItem("auth");
+  }, []);
   return (
     <>
       <div className="grid grid-cols-12 p-5 bg-slate-100 h-screen">
@@ -72,7 +76,7 @@ const Login = () => {
                 Enter Password
               </label>
 
-              <Form.Item name="password" rules={validationRules.password}>
+              <Form.Item name="password" rules={validationRules.passwordLogin}>
                 <Input.Password
                   type="Password"
                   placeholder="Password"

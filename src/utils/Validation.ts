@@ -14,7 +14,7 @@ export const validationRules = {
       message: "Password is required",
     },
     { max: 40, message: "Password must be at most 40 characters long" },
-    { min: 3, message: "Password must be at least 6 characters long" },
+    { min: 6, message: "Password must be at least 6 characters long" },
     {
       validator: (_, value) => {
         if (!/[a-z]/.test(value) || !/[A-Z]/.test(value)) {
@@ -26,6 +26,13 @@ export const validationRules = {
         }
         return Promise.resolve();
       },
+    },
+  ],
+
+    passwordLogin: [
+    {
+      required: true,
+      message: "Password is required",
     },
   ],
 

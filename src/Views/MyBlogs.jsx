@@ -1,5 +1,6 @@
 import {
   Button,
+  ConfigProvider,
   Dropdown,
   Form,
   Input,
@@ -8,6 +9,7 @@ import {
   Modal,
   Pagination,
   Select,
+  Skeleton,
   Space,
   Table,
   Tag,
@@ -15,7 +17,7 @@ import {
 } from "antd";
 
 import { useEffect, useState } from "react";
-import { CloseCircleIcon } from "../assets/Icons/Icons";
+import { CloseCircleIcon, HideIcon, UnHideIcon } from "../assets/Icons/Icons";
 import TextArea from "antd/es/input/TextArea";
 import axios from "axios";
 import { validationRules } from "../utils/Validation";
@@ -29,6 +31,7 @@ import Search from "antd/es/transfer/search";
 const { confirm } = Modal;
 const MyBlogs = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isTableDataLoading, setIsTableDataLoading] = useState(true);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [IsButtonLoading, setIsButtonLoading] = useState(false);
   const [BlogsCount, setBlogsCount] = useState();
@@ -45,7 +48,7 @@ const MyBlogs = () => {
   const [category, setCategory] = useState("");
   const [selectedBlogID, setSelectedBlogID] = useState("");
   const [sort, setSort] = useState("latest");
-  
+
   // ---- Success popup -----------
   const [api, contextHolder] = message.useMessage();
   const openNotification = (m) => {
@@ -101,7 +104,10 @@ const MyBlogs = () => {
         totalPages: response.data.totalPages,
         currentPage: response.data.currentPage,
       });
+      setIsTableDataLoading(false);
     } catch (error) {
+      setIsTableDataLoading(false);
+
       console.error("Error submitting form:", error);
     } finally {
       console.log("Inside finally");
@@ -365,7 +371,7 @@ const MyBlogs = () => {
           </div>
         ),
         key: "1",
-        icon: <EditIcon />,
+        icon: <HideIcon />,
       },
       {
         type: "divider",
@@ -373,11 +379,11 @@ const MyBlogs = () => {
       {
         label: (
           <div onClick={showUnHideBlogMessage} className="ms-2">
-            Un Hide
+            Un-Hide
           </div>
         ),
         key: "2",
-        icon: <EditIcon />,
+        icon: <UnHideIcon />,
       },
       {
         type: "divider",
@@ -502,7 +508,7 @@ const MyBlogs = () => {
 
   const onSearch = (value) => {
     console.log(value);
-    SearchBar(value);
+    SearchBar();
   };
 
   const handleSortChange = (value) => {
@@ -528,16 +534,16 @@ const MyBlogs = () => {
         </div>
         <div className="col-span-12 sm:col-span-4 bg-teal-100  p-5  rounded-md shadow-md">
           <h1 className="text-xl font-semibold">Total Blogs</h1>
-          <div className="text-3xl">{BlogsCount && BlogsCount.totalPosts}</div>
+          <div className="text-3xl">{BlogsCount && BlogsCount.totalPosts || 0}</div>
         </div>
         <div className="col-span-12 sm:col-span-4 bg-[#E8F5E9] p-5 rounded-md shadow-md">
           <h1 className="text-xl font-semibold">Total Likes</h1>
-          <div className="text-3xl">{BlogsCount && BlogsCount.totalLikes}</div>
+          <div className="text-3xl">{BlogsCount && BlogsCount.totalLikes || 0}</div>
         </div>
         <div className="col-span-12 sm:col-span-4 bg-[#FFFDE7] p-5 rounded-md shadow-md">
           <h1 className="text-xl font-semibold">Total Comments</h1>
           <div className="text-3xl">
-            {BlogsCount && BlogsCount.totalComments}
+            {BlogsCount && BlogsCount.totalComments || 0}
           </div>
         </div>
         <div className="flex gap-2 items-center col-span-12">
@@ -545,9 +551,10 @@ const MyBlogs = () => {
             placeholder="Search Blog"
             allowClear
             enterButton="Search"
-            onSearch={onSearch}
             size="large"
+            onSearch={onSearch}
           />
+
           <Select
             style={{ minWidth: 150 }}
             placeholder="Category"
@@ -570,30 +577,52 @@ const MyBlogs = () => {
             ]}
           />
         </div>
+
         <div className="col-span-12 shadow-lg rounded-md">
-          <Table
-            rowKey={(record) => record.id}
-            onRow={(record) => {
-              return {
-                onClick: () => {
-                  handleEditBlog(record.id);
+          {isTableDataLoading ? (
+            <ConfigProvider
+              theme={{
+                token: {
+                  controlHeight: 590,
                 },
-              };
-            }}
-            columns={COLUMNS}
-            dataSource={blogData.blogs}
-            pagination={false}
-            scroll={{
-              x: "max-content",
-            }}
-          />
+              }}
+            >
+              <Skeleton.Button active={true} size="small" block />
+            </ConfigProvider>
+          ) : (
+            <div className="grid grid-cols-12 h-screen">
+              {blogData.blogs.length > 0 ? (
+                <>
+                  <Table
+                    className="col-span-12"
+                    rowKey={(record) => record.id}
+                    onRow={(record) => {
+                      return {
+                        onClick: () => {
+                          handleEditBlog(record.id);
+                        },
+                      };
+                    }}
+                    columns={COLUMNS}
+                    dataSource={blogData.blogs}
+                    pagination={false}
+                    scroll={{
+                      x: "max-content",
+                    }}
+                  />
+                  <Pagination
+                    className="mb-5 mt-5 col-start-4 md:col-start-6 col-span-6"
+                    current={page}
+                    total={blogData.totalBlogs}
+                    onChange={handlePageChange}
+                  />
+                </>
+              ) : (
+                <p className="col-span-12 p-3">No Blogs Posted Yet</p>
+              )}
+            </div>
+          )}
         </div>
-        <Pagination
-          className="mb-5 mt-5 col-start-4 md:col-start-6 col-span-6"
-          current={page}
-          total={blogData.totalBlogs}
-          onChange={handlePageChange}
-        />
         <Modal
           open={isModalOpen}
           onCancel={handleCancel}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import { FaBars } from "react-icons/fa"; 
+import { FaBars } from "react-icons/fa";
+import { BlogIcon, GraphIcon, LogoutIcon, UserIcon } from "../assets/Icons/Icons";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -8,16 +9,16 @@ const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const sideBarOptions = [
-    { name: "Statistics", path: "/dashboard/stats" },
-    { name: "My Blogs", path: "/dashboard/blogs" },
-    { name: "Profile", path: "/dashboard/profile" },
-    { name: "Logout", path: "/login" },
+    { name: "Statistics", path: "/dashboard/stats", icon: <GraphIcon /> },
+    { name: "My Blogs", path: "/dashboard/blogs", icon: <BlogIcon/> },
+    { name: "Profile", path: "/dashboard/profile", icon: <UserIcon/> },
+    { name: "Logout", path: "/login", icon: <LogoutIcon/> },
   ];
 
   const handleNavigation = (option) => {
     setActive(option.name);
     navigate(option.path);
-    setSidebarOpen(false); 
+    setSidebarOpen(false);
   };
 
   useEffect(() => {
@@ -25,11 +26,9 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div
-     className="flex">
+    <div className="flex">
       {/* Sidebar */}
       <div
-      
         className={`fixed inset-y-0  left-0 bg-blue-100   p-4 transition-transform transform ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } md:relative md:translate-x-0 md:col-span-3 md:block`}
@@ -42,17 +41,25 @@ const Dashboard = () => {
             Gup Shup
           </h3>
         </div>
-        <ul>
+        <ul className="mt-5">
           {sideBarOptions.map((option) => (
+            <div key={option.name} className="flex gap-2 items-center">
+              <div className="mt-2">
+                {option.icon}
+              </div>
             <li
               key={option.name}
               className={`p-2 rounded-md font-semibold  cursor-pointer w-44 ${
-                active === option.name ? "bg-blue-200 mt-1" : "hover:bg-blue-200 mt-1"
+                active === option.name
+                  ? "bg-blue-200 mt-1"
+                  : "hover:bg-blue-200 mt-1"
               }`}
               onClick={() => handleNavigation(option)}
             >
               {option.name}
             </li>
+
+            </div>
           ))}
         </ul>
       </div>
