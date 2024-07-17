@@ -1,19 +1,39 @@
 import {  Select } from 'antd';
-import  { useState } from 'react';
+import axios from 'axios';
+import  { useEffect, useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
 
 const Statistics = () => {
+    const getBlogStats = async () => {
+      const config = {
+        url: `http://localhost:3000/api/Blog/userBlogsStats/${localStorage.getItem("ID")}`,
+        method: "GET",
+      };
+
+      try {
+        const response = await axios(config);
+        console.log("Blog stats: ");
+        console.log(response.data);
+
+      } catch (error) {
+       
+        console.error("Error submitting form:", error);
+      } finally {
+        console.log("Inside finally");
+      }
+    };
+
   const [series] = useState([
     {
-      name: "Net Profit",
+      name: "Blogs",
       data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
     },
     {
-      name: "Revenue",
+      name: "Likes",
       data: [76, 85, 101, 98, 87, 105, 91, 114, 94],
     },
     {
-      name: "Free Cash Flow",
+      name: "Comments",
       data: [35, 41, 36, 26, 45, 48, 52, 53, 41],
     },
   ]);
@@ -51,11 +71,6 @@ const Statistics = () => {
         "Oct",
       ],
     },
-    yaxis: {
-      title: {
-        text: "$ (thousands)",
-      },
-    },
     fill: {
       opacity: 1,
     },
@@ -67,6 +82,10 @@ const Statistics = () => {
       },
     },
   });
+
+  useEffect(() => {
+    getBlogStats();
+  },[]);
 
   return (
     <div className="grid grid-cols-12 h-screen">

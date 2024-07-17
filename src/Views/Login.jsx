@@ -35,6 +35,8 @@ const Login = () => {
       const response = await axios(config);
       localStorage.setItem("auth", "true");
       localStorage.setItem("ID", response.data._id);
+      localStorage.setItem("name", response.data.name);
+
       setEmail("");
       setPassword("");
       navigate("/dashboard/stats");
@@ -49,6 +51,8 @@ const Login = () => {
   useEffect(() => {
     localStorage.removeItem("ID");
     localStorage.removeItem("auth");
+    localStorage.removeItem("name");
+
   }, []);
   return (
     <>

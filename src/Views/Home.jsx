@@ -1,6 +1,6 @@
 import { Card, Input, Select, Skeleton } from "antd";
 import { useNavigate } from "react-router-dom";
-import { SendIcon } from "../assets/Icons/Icons";
+import { SendIcon, UserIcon } from "../assets/Icons/Icons";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Search from "antd/es/input/Search";
@@ -80,6 +80,7 @@ const Home = () => {
       console.log(response.data);
       setBlogData(response.data);
     } catch (error) {
+      setBlogData([]);
       console.error("Error submitting form:", error);
     } finally {
       console.log("Inside finally");
@@ -93,6 +94,9 @@ const Home = () => {
       url: `http://localhost:3000/api/Blog/addComment`,
       method: "POST",
       data: {
+        name: localStorage.getItem("name")
+          ? localStorage.getItem("name")
+          : "Unknown",
         blogId,
         content,
       },
@@ -263,16 +267,11 @@ const Home = () => {
                     }}
                     className="col-span-12 md:col-start-4 md:col-span-7 lg:col-start-4 lg:col-span-6 shadow-md mb-5 mx-5 md:mx-0"
                   >
-                    <div className="flex gap-2">
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="w-7 h-7"
-                      >
-                        <path d="M12 2A10.13 10.13 0 002 12a10 10 0 004 7.92V20h.1a9.7 9.7 0 0011.8 0h.1v-.08A10 10 0 0022 12 10.13 10.13 0 0012 2zM8.07 18.93A3 3 0 0111 16.57h2a3 3 0 012.93 2.36 7.75 7.75 0 01-7.86 0zm9.54-1.29A5 5 0 0013 14.57h-2a5 5 0 00-4.61 3.07A8 8 0 014 12a8.1 8.1 0 018-8 8.1 8.1 0 018 8 8 8 0 01-2.39 5.64z" />
-                        <path d="M12 6a3.91 3.91 0 00-4 4 3.91 3.91 0 004 4 3.91 3.91 0 004-4 3.91 3.91 0 00-4-4zm0 6a1.91 1.91 0 01-2-2 1.91 1.91 0 012-2 1.91 1.91 0 012 2 1.91 1.91 0 01-2 2z" />
-                      </svg>
-                      <h1 className="text-xl font-bold ">{blog.user.name}</h1>
+                    <div className="flex gap-1">
+                      <UserIcon />
+                      <h1 className="text-lg font-bold ">
+                        {blog.user.name ? blog.user.name : blog.username}
+                      </h1>
                     </div>
                     <div className="mt-2 ml-1 text-base ">{blog.title}</div>
                     <div className="mt-2 ml-1 text-base ">{blog.content}</div>
@@ -290,6 +289,8 @@ const Home = () => {
                     </div>
                     {blog.comments.map((comment) => (
                       <div key={comment._id} className="mt-1">
+                        {comment.name}
+                        {": "}
                         {comment.content}
                       </div>
                     ))}
@@ -317,7 +318,7 @@ const Home = () => {
                 ))}
               </>
             ) : (
-              <p>No Blogs Uploaded Yet</p>
+              <p className="col-span-12 flex justify-center">No Blogs</p>
             )}
           </>
         )}

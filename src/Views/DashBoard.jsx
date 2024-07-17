@@ -27,7 +27,6 @@ const Dashboard = () => {
 
   return (
     <div className="flex">
-      {/* Sidebar */}
       <div
         className={`fixed inset-y-0  left-0 bg-blue-100   p-4 transition-transform transform ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -64,7 +63,7 @@ const Dashboard = () => {
         </ul>
       </div>
 
-      {/* Main content */}
+ 
       <div className="flex-1 md:col-span-9 p-4">
         <button
           className="md:hidden p-2"

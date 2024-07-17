@@ -40,6 +40,8 @@ const SignUp = () => {
       console.log("Form submitted successfully!");
       localStorage.setItem("auth", "true");
       localStorage.setItem("ID", response.data._id);
+      localStorage.setItem("name", response.data.name);
+
       setEmail("");
       setName("");
       setPassword("");

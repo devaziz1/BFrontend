@@ -158,6 +158,7 @@ const MyBlogs = () => {
       method: "POST",
       data: {
         userId: localStorage.getItem("ID"),
+        username:localStorage.getItem("name"),
         title,
         content,
         category,
@@ -170,7 +171,7 @@ const MyBlogs = () => {
       console.log(response.data);
       form.setFieldValue("title", "");
       form.setFieldValue("content", "");
-      form.setFieldValue("category", "");
+      form.setFieldValue("Category", "");
       getBlogCount();
       getBlogByUser();
       openNotification("Blog created successfully!");
@@ -611,7 +612,7 @@ const MyBlogs = () => {
                     }}
                   />
                   <Pagination
-                    className="mb-5 mt-5 col-start-4 md:col-start-6 col-span-6"
+                    className="mb-5 mt-5 col-start-4 md:col-start-6 col-span-6 flex items-end "
                     current={page}
                     total={blogData.totalBlogs}
                     onChange={handlePageChange}
