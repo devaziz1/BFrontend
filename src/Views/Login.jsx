@@ -23,7 +23,7 @@ const Login = () => {
     setIsButtonLoading(true);
 
     const config = {
-      url: "http://localhost:3000/api/users/login",
+      url: "https://n8jw5v7c-3000.inc1.devtunnels.ms/api/users/login",
       method: "POST",
       data: {
         email,
@@ -52,7 +52,6 @@ const Login = () => {
     localStorage.removeItem("ID");
     localStorage.removeItem("auth");
     localStorage.removeItem("name");
-
   }, []);
   return (
     <>

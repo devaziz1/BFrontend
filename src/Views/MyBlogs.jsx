@@ -60,7 +60,7 @@ const MyBlogs = () => {
 
   const getBlogCount = async () => {
     const config = {
-      url: `http://localhost:3000/api/Blog/getTotalCounts/${localStorage.getItem(
+      url: `https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/getTotalCounts/${localStorage.getItem(
         "ID"
       )}`,
       method: "GET",
@@ -79,7 +79,7 @@ const MyBlogs = () => {
 
   const getBlogByUser = async () => {
     const config = {
-      url: `http://localhost:3000/api/Blog/getBlogsByUserId/${localStorage.getItem(
+      url: `https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/getBlogsByUserId/${localStorage.getItem(
         "ID"
       )}?sort=${sort}&page=${page}&limit=10`,
       method: "GET",
@@ -126,7 +126,7 @@ const MyBlogs = () => {
   // ------- search ------------
   const SearchBar = async (title) => {
     const config = {
-      url: `http://localhost:3000/api/Blog/search/${title}?id=${localStorage.getItem(
+      url: `https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/search/${title}?id=${localStorage.getItem(
         "id"
       )}`,
       method: "GET",
@@ -164,7 +164,7 @@ const MyBlogs = () => {
     setIsButtonLoading(true);
 
     const config = {
-      url: "http://localhost:3000/api/Blog/createBlog",
+      url: "https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/createBlog",
       method: "POST",
       data: {
         userId: localStorage.getItem("ID"),
@@ -225,7 +225,7 @@ const MyBlogs = () => {
     setIsButtonLoading(true);
 
     const config = {
-      url: "http://localhost:3000/api/Blog/",
+      url: "https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/",
       method: "PATCH",
       data: {
         blogId: selectedBlogID,
@@ -263,7 +263,7 @@ const MyBlogs = () => {
 
   const handleDeleteBlog = async () => {
     const config = {
-      url: `http://localhost:3000/api/Blog/${selectedBlogID}`,
+      url: `https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/${selectedBlogID}`,
       method: "DELETE",
     };
 
@@ -285,7 +285,7 @@ const MyBlogs = () => {
 
   const handleHideBlog = async () => {
     const config = {
-      url: `http://localhost:3000/api/Blog/hideblog/${selectedBlogID}`,
+      url: `https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/hideblog/${selectedBlogID}`,
       method: "PATCH",
     };
 
@@ -307,7 +307,7 @@ const MyBlogs = () => {
 
   const handleUnHideBlog = async () => {
     const config = {
-      url: `http://localhost:3000/api/Blog/UnHideblog/${selectedBlogID}`,
+      url: `https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/UnHideblog/${selectedBlogID}`,
       method: "PATCH",
     };
 
@@ -438,7 +438,7 @@ const MyBlogs = () => {
     console.log("category in side API call");
     console.log(category);
     const config = {
-      url: `http://localhost:3000/api/Blog/searchByCategoryForUser?category=${category}&userId=${localStorage.getItem(
+      url: `https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/searchByCategoryForUser?category=${category}&userId=${localStorage.getItem(
         "ID"
       )}`,
       method: "GET",

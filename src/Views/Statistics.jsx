@@ -10,7 +10,7 @@ const Statistics = () => {
   const getDailyBlogStats = async () => {
     try {
       const config = {
-        url: `http://localhost:3000/api/Blog/DailyBlogsStats/${localStorage.getItem(
+        url: `https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/DailyBlogsStats/${localStorage.getItem(
           "ID"
         )}`,
         method: "GET",
@@ -36,13 +36,12 @@ const Statistics = () => {
       ]);
     } catch (error) {
       console.error("Error getting daily blog stats:", error);
-      
     }
   };
 
   const getMonthlyBlogStats = async () => {
     const config = {
-      url: `http://localhost:3000/api/Blog/MonthlyBlogsStats/${localStorage.getItem(
+      url: `https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/MonthlyBlogsStats/${localStorage.getItem(
         "ID"
       )}`,
       method: "GET",
@@ -52,7 +51,6 @@ const Statistics = () => {
       const response = await axios(config);
       console.log("Monthly Blog stats: ", response.data);
 
-    
       const blogs = [];
       const likes = [];
       const comments = [];
@@ -64,14 +62,12 @@ const Statistics = () => {
         comments[monthIndex] = item.totalComments;
       });
 
-    
       for (let i = 0; i < 12; i++) {
         if (blogs[i] === undefined) blogs[i] = 0;
         if (likes[i] === undefined) likes[i] = 0;
         if (comments[i] === undefined) comments[i] = 0;
       }
 
-  
       setSeries([
         { name: "Blogs", data: blogs },
         { name: "Likes", data: likes },
@@ -84,7 +80,7 @@ const Statistics = () => {
 
   const getYearlyBlogStats = async () => {
     const config = {
-      url: `http://localhost:3000/api/Blog/YearlyBlogsStats/${localStorage.getItem(
+      url: `https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/YearlyBlogsStats/${localStorage.getItem(
         "ID"
       )}`,
       method: "GET",
@@ -94,21 +90,18 @@ const Statistics = () => {
       const response = await axios(config);
       console.log("Yearly Blog stats: ", response.data);
 
-    
-      const blogs = new Array(3).fill(0); 
+      const blogs = new Array(3).fill(0);
       const likes = new Array(3).fill(0);
       const comments = new Array(3).fill(0);
 
       response.data.forEach((item) => {
-        const yearIndex = parseInt(item._id) - 2022; 
+        const yearIndex = parseInt(item._id) - 2022;
         if (yearIndex >= 0 && yearIndex < 3) {
-       
           blogs[yearIndex] = item.totalBlogs;
           likes[yearIndex] = item.totalLikes;
           comments[yearIndex] = item.totalComments;
         }
       });
-
 
       setSeries([
         { name: "Blogs", data: blogs },
@@ -145,11 +138,11 @@ const Statistics = () => {
     },
     yaxis: {
       min: 0,
-      max: 10, 
-      tickAmount: 5, 
+      max: 10,
+      tickAmount: 5,
       labels: {
         formatter: function (val) {
-          return val; 
+          return val;
         },
       },
     },

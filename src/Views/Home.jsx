@@ -13,7 +13,7 @@ const Home = () => {
 
   const getBlogsData = async () => {
     const config = {
-      url: "https://gup-shup-backend.vercel.app/api/Blog/getAllBlogs",
+      url: "https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/getAllBlogs",
       method: "GET",
     };
 
@@ -29,42 +29,39 @@ const Home = () => {
     }
   };
 
-const likeBlog = async (blogID) => {
+  const likeBlog = async (blogID) => {
+    const likes = JSON.parse(localStorage.getItem("likes")) || [];
 
-  const likes = JSON.parse(localStorage.getItem("likes")) || [];
+    if (likes.includes(blogID)) {
+      console.log("Blog already liked");
+      return;
+    }
 
- 
-  if (likes.includes(blogID)) {
-    console.log("Blog already liked");
-    return;
-  }
+    const config = {
+      url: `https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/like/${blogID}`,
+      method: "PATCH",
+    };
 
-  const config = {
-    url: `http://localhost:3000/api/Blog/like/${blogID}`,
-    method: "PATCH",
+    try {
+      const response = await axios(config);
+      console.log(response.data);
+
+      likes.push(blogID);
+      localStorage.setItem("likes", JSON.stringify(likes));
+
+      getBlogsData();
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    } finally {
+      console.log("Inside finally");
+    }
   };
-
-  try {
-    const response = await axios(config);
-    console.log(response.data);
-
-    likes.push(blogID);
-    localStorage.setItem("likes", JSON.stringify(likes));
-
-    getBlogsData();
-  } catch (error) {
-    console.error("Error submitting form:", error);
-  } finally {
-    console.log("Inside finally");
-  }
-};
-
 
   const SearchByTitle = async (title) => {
     console.log("Titile in side API call");
     console.log(title);
     const config = {
-      url: `http://localhost:3000/api/Blog/searchByTitle/${title}`,
+      url: `https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/searchByTitle/${title}`,
       method: "GET",
     };
 
@@ -84,7 +81,7 @@ const likeBlog = async (blogID) => {
     console.log("category in side API call");
     console.log(category);
     const config = {
-      url: `http://localhost:3000/api/Blog/searchByCategory/${category}`,
+      url: `https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/searchByCategory/${category}`,
       method: "GET",
     };
 
@@ -105,7 +102,7 @@ const likeBlog = async (blogID) => {
     console.log("Inside Comment On Blog API Call");
     console.log(blogId, content);
     const config = {
-      url: `http://localhost:3000/api/Blog/addComment`,
+      url: `https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/addComment`,
       method: "POST",
       data: {
         name: localStorage.getItem("name")
