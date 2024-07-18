@@ -13,7 +13,7 @@ const Home = () => {
 
   const getBlogsData = async () => {
     const config = {
-      url: "http://localhost:3000/api/Blog/getAllBlogs",
+      url: "https://gup-shup-backend.vercel.app/api/Blog/getAllBlogs",
       method: "GET",
     };
 

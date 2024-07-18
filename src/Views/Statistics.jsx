@@ -36,7 +36,7 @@ const Statistics = () => {
       ]);
     } catch (error) {
       console.error("Error getting daily blog stats:", error);
-      // Handle error appropriately
+      
     }
   };
 
@@ -52,26 +52,26 @@ const Statistics = () => {
       const response = await axios(config);
       console.log("Monthly Blog stats: ", response.data);
 
-      // Extract data from response
+    
       const blogs = [];
       const likes = [];
       const comments = [];
 
       response.data.forEach((item) => {
-        const monthIndex = new Date(item._id + "-01").getMonth(); // Extract month index from _id
+        const monthIndex = new Date(item._id + "-01").getMonth();
         blogs[monthIndex] = item.totalBlogs;
         likes[monthIndex] = item.totalLikes;
         comments[monthIndex] = item.totalComments;
       });
 
-      // Fill undefined months with 0
+    
       for (let i = 0; i < 12; i++) {
         if (blogs[i] === undefined) blogs[i] = 0;
         if (likes[i] === undefined) likes[i] = 0;
         if (comments[i] === undefined) comments[i] = 0;
       }
 
-      // Update series for monthly data
+  
       setSeries([
         { name: "Blogs", data: blogs },
         { name: "Likes", data: likes },
@@ -94,22 +94,22 @@ const Statistics = () => {
       const response = await axios(config);
       console.log("Yearly Blog stats: ", response.data);
 
-      // Extract data from response
-      const blogs = new Array(3).fill(0); // assuming data for 3 years: 2022, 2023, 2024
+    
+      const blogs = new Array(3).fill(0); 
       const likes = new Array(3).fill(0);
       const comments = new Array(3).fill(0);
 
       response.data.forEach((item) => {
-        const yearIndex = parseInt(item._id) - 2022; // Adjust index based on year
+        const yearIndex = parseInt(item._id) - 2022; 
         if (yearIndex >= 0 && yearIndex < 3) {
-          // Ensure the index is within bounds
+       
           blogs[yearIndex] = item.totalBlogs;
           likes[yearIndex] = item.totalLikes;
           comments[yearIndex] = item.totalComments;
         }
       });
 
-      // Update series for yearly data
+
       setSeries([
         { name: "Blogs", data: blogs },
         { name: "Likes", data: likes },
