@@ -27,7 +27,6 @@ import moment from "moment";
 
 import { truncateDescription } from "../utils/truncate";
 import { ExclamationCircleFilled } from "@ant-design/icons";
-import Search from "antd/es/transfer/search";
 const { confirm } = Modal;
 const MyBlogs = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -48,6 +47,7 @@ const MyBlogs = () => {
   const [category, setCategory] = useState("");
   const [selectedBlogID, setSelectedBlogID] = useState("");
   const [sort, setSort] = useState("latest");
+  const [searchValue, setSearchValue] = useState("");
 
   // ---- Success popup -----------
   const [api, contextHolder] = message.useMessage();
@@ -93,6 +93,7 @@ const MyBlogs = () => {
       const transformedBlogs = response.data.blogs.map((blog) => ({
         id: blog._id,
         title: blog.title,
+        category: blog.category,
         description: blog.content,
         Status: blog.hide ? "hide" : "unhide",
         CreatedAt: blog.createdAt,
@@ -124,8 +125,6 @@ const MyBlogs = () => {
 
   // ------- search ------------
   const SearchBar = async (title) => {
-    console.log("Titile in side API call");
-    console.log(title);
     const config = {
       url: `http://localhost:3000/api/Blog/search/${title}?id=${localStorage.getItem(
         "id"
@@ -137,6 +136,17 @@ const MyBlogs = () => {
       const response = await axios(config);
       console.log("search reasults for user");
       console.log(response.data);
+      const transformedBlogs = response.data.map((blog) => ({
+        id: blog._id,
+        title: blog.title,
+        description: blog.content,
+        Status: blog.hide ? "hide" : "unhide",
+        CreatedAt: blog.createdAt,
+      }));
+
+      setBlogData({
+        blogs: transformedBlogs,
+      });
     } catch (error) {
       console.error("Error submitting form:", error);
     } finally {
@@ -158,7 +168,7 @@ const MyBlogs = () => {
       method: "POST",
       data: {
         userId: localStorage.getItem("ID"),
-        username:localStorage.getItem("name"),
+        username: localStorage.getItem("name"),
         title,
         content,
         category,
@@ -190,16 +200,24 @@ const MyBlogs = () => {
 
   // ------- Edit Blog Functions --------------
 
-  const handleEditBlog = (id) => {
-    console.log("Selected blog:", id);
-    const blog = blogData.blogs.find((blog) => blog.id === id);
-    form.setFieldValue("title", blog.title);
-    form.setFieldValue("content", blog.description);
-    form.setFieldsValue("Category", blog.category);
-    setSelectedBlogID(blog.id);
+  const setSelectedID = (id) => {
+    console.log("Inside First function");
+    console.log(id);
+    setSelectedBlogID(id);
   };
 
   const showEditModal = () => {
+    console.log("Inside Second function");
+    console.log("Selected blog:", selectedBlogID);
+    const blog = blogData.blogs.find((blog) => blog.id === selectedBlogID);
+    console.log("Blog found");
+    console.log(blog);
+    setTitle(blog.title);
+    setContent(blog.description);
+    setCategory(blog.category);
+    form.setFieldValue("Etitle", blog.title);
+    form.setFieldValue("Econtent", blog.description);
+    form.setFieldsValue("Ecategory", blog.category);
     setIsEditModalOpen(true);
   };
 
@@ -220,9 +238,12 @@ const MyBlogs = () => {
     try {
       const response = await axios(config);
       console.log(response.data);
-      form.setFieldValue("title", "");
-      form.setFieldsValue("content", "");
-      form.setFieldsValue("category", "");
+      setTitle("");
+      setContent("");
+      setCategory("");
+      form.setFieldValue("Etitle", "");
+      form.setFieldsValue("Econtent", "");
+      form.setFieldsValue("Ecategory", "");
       getBlogByUser();
       openNotification("Blog updated successfully!");
       setIsEditModalOpen(false);
@@ -507,9 +528,15 @@ const MyBlogs = () => {
     },
   ];
 
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      onSearch(searchValue);
+    }
+  };
+
   const onSearch = (value) => {
     console.log(value);
-    SearchBar();
+    SearchBar(value);
   };
 
   const handleSortChange = (value) => {
@@ -535,25 +562,29 @@ const MyBlogs = () => {
         </div>
         <div className="col-span-12 sm:col-span-4 bg-teal-100  p-5  rounded-md shadow-md">
           <h1 className="text-xl font-semibold">Total Blogs</h1>
-          <div className="text-3xl">{BlogsCount && BlogsCount.totalPosts || 0}</div>
+          <div className="text-3xl">
+            {(BlogsCount && BlogsCount.totalPosts) || 0}
+          </div>
         </div>
         <div className="col-span-12 sm:col-span-4 bg-[#E8F5E9] p-5 rounded-md shadow-md">
           <h1 className="text-xl font-semibold">Total Likes</h1>
-          <div className="text-3xl">{BlogsCount && BlogsCount.totalLikes || 0}</div>
+          <div className="text-3xl">
+            {(BlogsCount && BlogsCount.totalLikes) || 0}
+          </div>
         </div>
         <div className="col-span-12 sm:col-span-4 bg-[#FFFDE7] p-5 rounded-md shadow-md">
           <h1 className="text-xl font-semibold">Total Comments</h1>
           <div className="text-3xl">
-            {BlogsCount && BlogsCount.totalComments || 0}
+            {(BlogsCount && BlogsCount.totalComments) || 0}
           </div>
         </div>
         <div className="flex gap-2 items-center col-span-12">
-          <Search
-            placeholder="Search Blog"
-            allowClear
-            enterButton="Search"
-            size="large"
-            onSearch={onSearch}
+          <Input
+            variant="borderless"
+            placeholder="Search by title"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
 
           <Select
@@ -600,7 +631,7 @@ const MyBlogs = () => {
                     onRow={(record) => {
                       return {
                         onClick: () => {
-                          handleEditBlog(record.id);
+                          setSelectedID(record.id);
                         },
                       };
                     }}
@@ -748,7 +779,7 @@ const MyBlogs = () => {
                     </label>
                     <Form.Item
                       initialValue={title}
-                      name="title"
+                      name="Etitle"
                       rules={validationRules.title}
                     >
                       <Input
@@ -764,7 +795,7 @@ const MyBlogs = () => {
                     </label>
                     <Form.Item
                       initialValue={category}
-                      name="Category"
+                      name="Ecategory"
                       rules={validationRules.category}
                     >
                       <Select
@@ -787,7 +818,7 @@ const MyBlogs = () => {
                     </label>
                     <Form.Item
                       initialValue={content}
-                      name="content"
+                      name="Econtent"
                       rules={validationRules.descrption}
                     >
                       <TextArea

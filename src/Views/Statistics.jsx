@@ -29,8 +29,6 @@ const Statistics = () => {
         extractedComments.push(item.totalComments);
       });
 
-
-
       setSeries([
         { name: "Blogs", data: extractedBlogs },
         { name: "Likes", data: extractedLikes },
@@ -73,8 +71,6 @@ const Statistics = () => {
         if (comments[i] === undefined) comments[i] = 0;
       }
 
-  
-
       // Update series for monthly data
       setSeries([
         { name: "Blogs", data: blogs },
@@ -113,8 +109,6 @@ const Statistics = () => {
         }
       });
 
-    
-
       // Update series for yearly data
       setSeries([
         { name: "Blogs", data: blogs },
@@ -149,19 +143,27 @@ const Statistics = () => {
     xaxis: {
       categories: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
     },
+    yaxis: {
+      min: 0,
+      max: 10, 
+      tickAmount: 5, 
+      labels: {
+        formatter: function (val) {
+          return val; 
+        },
+      },
+    },
     fill: {
       opacity: 1,
     },
     tooltip: {
       y: {
         formatter: function (val) {
-          return "$ " + val + " thousands";
+          return val;
         },
       },
     },
   });
-
-
 
   const [options2] = useState({
     chart: {
@@ -199,19 +201,27 @@ const Statistics = () => {
         "Dec",
       ],
     },
+    yaxis: {
+      min: 0,
+      max: 10,
+      tickAmount: 5,
+      labels: {
+        formatter: function (val) {
+          return val;
+        },
+      },
+    },
     fill: {
       opacity: 1,
     },
     tooltip: {
       y: {
         formatter: function (val) {
-          return "$ " + val + " thousands";
+          return val;
         },
       },
     },
   });
-
-
 
   const [options3] = useState({
     chart: {
@@ -236,13 +246,23 @@ const Statistics = () => {
     xaxis: {
       categories: ["2022", "2023", "2024"],
     },
+    yaxis: {
+      min: 0,
+      max: 10,
+      tickAmount: 5,
+      labels: {
+        formatter: function (val) {
+          return val;
+        },
+      },
+    },
     fill: {
       opacity: 1,
     },
     tooltip: {
       y: {
         formatter: function (val) {
-          return "$ " + val + " thousands";
+          return val;
         },
       },
     },
@@ -259,8 +279,6 @@ const Statistics = () => {
       getYearlyBlogStats();
     }
   };
-
-
 
   useEffect(() => {
     getDailyBlogStats();

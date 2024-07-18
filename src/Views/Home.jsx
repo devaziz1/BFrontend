@@ -29,22 +29,36 @@ const Home = () => {
     }
   };
 
-  const likeBlog = async (blogID) => {
-    const config = {
-      url: `http://localhost:3000/api/Blog/like/${blogID}`,
-      method: "PATCH",
-    };
+const likeBlog = async (blogID) => {
 
-    try {
-      const response = await axios(config);
-      console.log(response.data);
-      getBlogsData();
-    } catch (error) {
-      console.error("Error submitting form:", error);
-    } finally {
-      console.log("Inside finally");
-    }
+  const likes = JSON.parse(localStorage.getItem("likes")) || [];
+
+ 
+  if (likes.includes(blogID)) {
+    console.log("Blog already liked");
+    return;
+  }
+
+  const config = {
+    url: `http://localhost:3000/api/Blog/like/${blogID}`,
+    method: "PATCH",
   };
+
+  try {
+    const response = await axios(config);
+    console.log(response.data);
+
+    likes.push(blogID);
+    localStorage.setItem("likes", JSON.stringify(likes));
+
+    getBlogsData();
+  } catch (error) {
+    console.error("Error submitting form:", error);
+  } finally {
+    console.log("Inside finally");
+  }
+};
+
 
   const SearchByTitle = async (title) => {
     console.log("Titile in side API call");
