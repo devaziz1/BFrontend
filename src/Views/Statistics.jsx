@@ -10,7 +10,7 @@ const Statistics = () => {
   const getDailyBlogStats = async () => {
     try {
       const config = {
-        url: `https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/DailyBlogsStats/${localStorage.getItem(
+        url: `http://localhost:3000/api/Blog/DailyBlogsStats/${localStorage.getItem(
           "ID"
         )}`,
         method: "GET",
@@ -41,7 +41,7 @@ const Statistics = () => {
 
   const getMonthlyBlogStats = async () => {
     const config = {
-      url: `https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/MonthlyBlogsStats/${localStorage.getItem(
+      url: `http://localhost:3000/api/Blog/MonthlyBlogsStats/${localStorage.getItem(
         "ID"
       )}`,
       method: "GET",
@@ -80,7 +80,7 @@ const Statistics = () => {
 
   const getYearlyBlogStats = async () => {
     const config = {
-      url: `https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/YearlyBlogsStats/${localStorage.getItem(
+      url: `http://localhost:3000/api/Blog/YearlyBlogsStats/${localStorage.getItem(
         "ID"
       )}`,
       method: "GET",
@@ -283,7 +283,7 @@ const Statistics = () => {
         <h3 className="text-2xl font-semibold">Statistics</h3>
         <Select
           style={{ minWidth: 150 }}
-          placeholder="Data"
+          defaultValue="Daily"
           onChange={handleSelectChange}
           options={[
             { value: "Daily", label: "Daily" },

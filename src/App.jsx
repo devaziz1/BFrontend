@@ -10,14 +10,13 @@ import SignUp from "./Views/SignUp";
 import Login from "./Views/Login";
 import DashBoard from "./Views/DashBoard";
 
-
 import PropTypes from "prop-types";
 
 import "./index.css";
 import Statistics from "./Views/Statistics";
 import Profile from "./Views/Profile";
 import MyBlogs from "./Views/MyBlogs";
-
+import Blog from "./Views/Blog";
 
 const PrivateRoute = ({ element }) => {
   const authenticated = localStorage.getItem("auth");
@@ -36,6 +35,7 @@ const App = () => {
         <Route exact path="/" element={<Home />} />
         <Route exact path="/signup" element={<SignUp />} />
         <Route exact path="/login" element={<Login />} />
+        <Route exact path="/blog/:id" element={<Blog />} />
         <Route
           exact
           path="/dashboard"

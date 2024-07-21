@@ -16,8 +16,15 @@ import {
   Typography,
 } from "antd";
 
-import { useEffect, useState } from "react";
-import { CloseCircleIcon, HideIcon, UnHideIcon } from "../assets/Icons/Icons";
+import { Editor } from "@tinymce/tinymce-react";
+import PropTypes from "prop-types";
+import { useEffect, useRef, useState } from "react";
+import {
+  CloseCircleIcon,
+  HideIcon,
+  ImageIcon,
+  UnHideIcon,
+} from "../assets/Icons/Icons";
 import TextArea from "antd/es/input/TextArea";
 import axios from "axios";
 import { validationRules } from "../utils/Validation";
@@ -27,6 +34,7 @@ import moment from "moment";
 
 import { truncateDescription } from "../utils/truncate";
 import { ExclamationCircleFilled } from "@ant-design/icons";
+import HtmlRender from "../utils/HtmlRender";
 const { confirm } = Modal;
 const MyBlogs = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -48,9 +56,22 @@ const MyBlogs = () => {
   const [selectedBlogID, setSelectedBlogID] = useState("");
   const [sort, setSort] = useState("latest");
   const [searchValue, setSearchValue] = useState("");
+  const [editorContent, setEditorContent] = useState(
+    "<p>This is the initial content of the editor.</p>"
+  );
+  const [image, setImage] = useState();
+  const fileInputRef = useRef(null);
 
   // ---- Success popup -----------
   const [api, contextHolder] = message.useMessage();
+
+  const editorRef = useRef(null);
+  // const log = () => {
+  //   if (editorRef.current) {
+  //     console.log(editorRef.current.getContent());
+  //   }
+  // };
+
   const openNotification = (m) => {
     api.open({
       type: "success",
@@ -60,7 +81,7 @@ const MyBlogs = () => {
 
   const getBlogCount = async () => {
     const config = {
-      url: `https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/getTotalCounts/${localStorage.getItem(
+      url: `http://localhost:3000/api/Blog/getTotalCounts/${localStorage.getItem(
         "ID"
       )}`,
       method: "GET",
@@ -79,7 +100,7 @@ const MyBlogs = () => {
 
   const getBlogByUser = async () => {
     const config = {
-      url: `https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/getBlogsByUserId/${localStorage.getItem(
+      url: `http://localhost:3000/api/Blog/getBlogsByUserId/${localStorage.getItem(
         "ID"
       )}?sort=${sort}&page=${page}&limit=10`,
       method: "GET",
@@ -126,7 +147,7 @@ const MyBlogs = () => {
   // ------- search ------------
   const SearchBar = async (title) => {
     const config = {
-      url: `https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/search/${title}?id=${localStorage.getItem(
+      url: `http://localhost:3000/api/Blog/search/${title}?id=${localStorage.getItem(
         "id"
       )}`,
       method: "GET",
@@ -163,16 +184,23 @@ const MyBlogs = () => {
   const handleSubmit = async () => {
     setIsButtonLoading(true);
 
+    const formData = new FormData();
+    formData.append("userId", localStorage.getItem("ID"));
+    formData.append("title", title);
+    formData.append("content", editorContent);
+    formData.append("category", category);
+    formData.append("username", localStorage.getItem("name"));
+    if (image) {
+      formData.append("image", image);
+    }
+
     const config = {
-      url: "https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/createBlog",
+      url: "http://localhost:3000/api/Blog/createBlog",
       method: "POST",
-      data: {
-        userId: localStorage.getItem("ID"),
-        username: localStorage.getItem("name"),
-        title,
-        content,
-        category,
+      headers: {
+        "Content-Type": "multipart/form-data",
       },
+      data: formData,
     };
 
     try {
@@ -225,7 +253,7 @@ const MyBlogs = () => {
     setIsButtonLoading(true);
 
     const config = {
-      url: "https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/",
+      url: "http://localhost:3000/api/Blog/",
       method: "PATCH",
       data: {
         blogId: selectedBlogID,
@@ -263,7 +291,7 @@ const MyBlogs = () => {
 
   const handleDeleteBlog = async () => {
     const config = {
-      url: `https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/${selectedBlogID}`,
+      url: `http://localhost:3000/api/Blog/${selectedBlogID}`,
       method: "DELETE",
     };
 
@@ -285,7 +313,7 @@ const MyBlogs = () => {
 
   const handleHideBlog = async () => {
     const config = {
-      url: `https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/hideblog/${selectedBlogID}`,
+      url: `http://localhost:3000/api/Blog/hideblog/${selectedBlogID}`,
       method: "PATCH",
     };
 
@@ -307,7 +335,7 @@ const MyBlogs = () => {
 
   const handleUnHideBlog = async () => {
     const config = {
-      url: `https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/UnHideblog/${selectedBlogID}`,
+      url: `http://localhost:3000/api/Blog/UnHideblog/${selectedBlogID}`,
       method: "PATCH",
     };
 
@@ -327,11 +355,11 @@ const MyBlogs = () => {
 
   // ------ Table Functions -------------
 
-  const ActionsColumn = () => {
+  const ActionsColumn = ({ status }) => {
     const showDeleteBlogMessage = () => {
       confirm({
         title: `Are you sure to delete this Blog?`,
-        icon: <ExclamationCircleFilled />,
+        icon: <DeleteIcon />,
         okText: "Yes",
         okType: "danger",
         cancelText: "No",
@@ -386,27 +414,25 @@ const MyBlogs = () => {
       {
         type: "divider",
       },
-      {
-        label: (
-          <div onClick={showHideBlogMessage} className="ms-2">
-            Hide
-          </div>
-        ),
-        key: "1",
-        icon: <HideIcon />,
-      },
-      {
-        type: "divider",
-      },
-      {
-        label: (
-          <div onClick={showUnHideBlogMessage} className="ms-2">
-            Un-Hide
-          </div>
-        ),
-        key: "2",
-        icon: <UnHideIcon />,
-      },
+      status === "unhide"
+        ? {
+            label: (
+              <div onClick={showHideBlogMessage} className="ms-2">
+                Hide
+              </div>
+            ),
+            key: "1",
+            icon: <HideIcon />,
+          }
+        : {
+            label: (
+              <div onClick={showUnHideBlogMessage} className="ms-2">
+                Un-Hide
+              </div>
+            ),
+            key: "2",
+            icon: <UnHideIcon />,
+          },
       {
         type: "divider",
       },
@@ -438,7 +464,7 @@ const MyBlogs = () => {
     console.log("category in side API call");
     console.log(category);
     const config = {
-      url: `https://n8jw5v7c-3000.inc1.devtunnels.ms/api/Blog/searchByCategoryForUser?category=${category}&userId=${localStorage.getItem(
+      url: `http://localhost:3000/api/Blog/searchByCategoryForUser?category=${category}&userId=${localStorage.getItem(
         "ID"
       )}`,
       method: "GET",
@@ -486,7 +512,7 @@ const MyBlogs = () => {
       dataIndex: "description",
       render: (description) => (
         <Typography.Text type="secondary">
-          {truncateDescription(description)}
+          <HtmlRender htmlContent={truncateDescription(description)} />
         </Typography.Text>
       ),
     },
@@ -497,10 +523,10 @@ const MyBlogs = () => {
         let color;
 
         if (Status === "unhide") {
-          color = "blue";
-          Status = "un-hide";
+          color = "green";
+          Status = "Active";
         } else if (Status === "hide") {
-          Status = "hide";
+          Status = "Hidden";
           color = "orange";
         } else {
           color = "error";
@@ -524,7 +550,7 @@ const MyBlogs = () => {
       title: "Actions",
       key: "actions",
       align: "right",
-      render: () => <ActionsColumn />,
+      render: (_, record) => <ActionsColumn status={record.Status} />,
     },
   ];
 
@@ -543,6 +569,23 @@ const MyBlogs = () => {
     setSort(value);
   };
 
+  const handleImageChange = (e) => {
+    const selectedFile = e.target.files && e.target.files[0];
+    if (selectedFile) {
+      setImage(selectedFile);
+    }
+  };
+
+  const handleButtonClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const resetImage = () => {
+    setImage(null);
+  };
+
   useEffect(() => {
     getBlogCount();
   }, []);
@@ -551,6 +594,10 @@ const MyBlogs = () => {
     getBlogCount();
     getBlogByUser();
   }, [page, sort]);
+
+  ActionsColumn.propTypes = {
+    status: PropTypes.string.isRequired,
+  };
 
   return (
     <>
@@ -673,6 +720,48 @@ const MyBlogs = () => {
                 </div>
               </div>
 
+              {image ? (
+                <div className=" col-span-12   w-full">
+                  <div
+                    onClick={resetImage}
+                    className="  flex justify-end mb-1 cursor-pointer"
+                  >
+                    <CloseCircleIcon />
+                  </div>
+                  <img
+                    className="w-full h-[400px] object-contain  "
+                    src={URL.createObjectURL(image)}
+                    alt="Uploaded"
+                  />
+                </div>
+              ) : (
+                <Form.Item
+                  className="col-span-12"
+                  name="image"
+                  rules={validationRules.Image}
+                >
+                  <div
+                    style={{
+                      border: "1px dashed black",
+                    }}
+                    onClick={handleButtonClick}
+                    className=" cursor-pointer  rounded-md  h-[100px]  opacity-40 text-center text-xs flex flex-col justify-center items-center  gap-3"
+                  >
+                    <ImageIcon />
+                    Tap To Add <br />
+                    Image max. 2mb
+                    <input
+                      style={{ display: "none" }}
+                      ref={fileInputRef}
+                      className="ml-2"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                    />
+                  </div>
+                </Form.Item>
+              )}
+
               <div className="grid grid-cols-12 col-span-12 ">
                 <div className="col-span-12 flex flex-col gap-3 md:px-16 lg:px-24 mt-4">
                   <div className="col-span-12 md:col-span-7 ">
@@ -710,17 +799,46 @@ const MyBlogs = () => {
                     <label className="text-sm ml-1 font-semibold">
                       Enter Blog
                     </label>
-                    <Form.Item
-                      name="content"
-                      rules={validationRules.descrption}
-                    >
-                      <TextArea
-                        rows={4}
-                        placeholder="Enter Blog"
-                        onChange={(e) => setContent(e.target.value)}
-                        autoSize={{ minRows: 3, maxRows: 5 }}
-                      />
-                    </Form.Item>
+
+                    <Editor
+                      apiKey="2e93k9pcsd46l2bwuh2241llbj8mjr0b5c8c39w9nga6upav"
+                      onInit={(_evt, editor) => (editorRef.current = editor)}
+                      initialValue="<p>This is the initial content of the editor.</p>"
+                      onEditorChange={(newContent) =>
+                        setEditorContent(newContent)
+                      }
+                      init={{
+                        height: 500,
+                        menubar: false,
+                        plugins: [
+                          "advlist",
+                          "autolink",
+                          "lists",
+                          "link",
+                          "image",
+                          "charmap",
+                          "preview",
+                          "anchor",
+                          "searchreplace",
+                          "visualblocks",
+                          "code",
+                          "fullscreen",
+                          "insertdatetime",
+                          "media",
+                          "table",
+                          "code",
+                          "help",
+                          "wordcount",
+                        ],
+                        toolbar:
+                          "undo redo | blocks | " +
+                          "bold italic forecolor | alignleft aligncenter " +
+                          "alignright alignjustify | bullist numlist outdent indent | " +
+                          "removeformat | help",
+                        content_style:
+                          "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                      }}
+                    />
                   </div>
 
                   <div className="flex gap-2 mt-5 col-span-12 justify-center">

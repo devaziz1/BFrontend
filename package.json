@@ -12,9 +12,11 @@
   "dependencies": {
     "@ant-design/icons": "^5.3.7",
     "@faker-js/faker": "^8.4.1",
+    "@tinymce/tinymce-react": "^5.1.1",
     "antd": "^5.19.1",
     "apexcharts": "^3.50.0",
     "axios": "^1.7.2",
+    "dompurify": "^3.1.6",
     "flowbite": "^2.4.1",
     "flowbite-react": "^0.10.1",
     "moment": "^2.30.1",

@@ -23,7 +23,7 @@ const Login = () => {
     setIsButtonLoading(true);
 
     const config = {
-      url: "https://n8jw5v7c-3000.inc1.devtunnels.ms/api/users/login",
+      url: "http://localhost:3000/api/users/login",
       method: "POST",
       data: {
         email,
