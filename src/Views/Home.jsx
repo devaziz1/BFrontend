@@ -239,14 +239,20 @@ const Home = () => {
               <>
                 {blogData.map((blog) => (
                   <Card
-                    onClick={() => navigate(`/blog/${blog._id}`)}
                     key={blog._id}
                     style={{
                       border: "1px solid #0096FF",
                     }}
-                    className="cursor-pointer col-span-12 md:col-start-4 md:col-span-7 lg:col-start-4 lg:col-span-6 shadow-md mb-5 mx-5 md:mx-0"
+                    className=" col-span-12 md:col-start-4 md:col-span-7 lg:col-start-4 lg:col-span-6 shadow-md mb-5 mx-5 md:mx-0"
                   >
-                    <div className="flex justify-between">
+                    {blog.image && (
+                      <img
+                        className="w-full h-[200px]  relative object-cover flex-shrink-0 rounded-md"
+                        src={blog.image}
+                        alt={blog.title}
+                      />
+                    )}
+                    <div className="flex justify-between mt-3 ">
                       <div className="flex gap-1">
                         <UserIcon />
                         <h1 className="text-lg font-bold ">
@@ -266,48 +272,17 @@ const Home = () => {
                         <div>{blog.likeCount}</div>
                       </div>
                     </div>
-                    {blog.image && (
-                      <img
-                        className="w-full h-[200px] object-contain "
-                        src={blog.image}
-                        alt={blog.title}
-                      />
-                    )}
 
-                    <div className="mt-2 ml-1 text-base font-medium">
+                    <div
+                      onClick={() => navigate(`/blog/${blog._id}`)}
+                      className="mt-2 ml-1 text-base font-medium cursor-pointer hover:underline"
+                    >
                       {blog.title}
                     </div>
                     <HtmlRender htmlContent={blog.content} />
-
-                    {/* {blog.comments.map((comment) => (
-                      <div key={comment._id} className="mt-1">
-                        {comment.name}
-                        {": "}
-                        {comment.content}
-                      </div>
-                    ))}
-                    <div className="flex justify-between items-center gap-2">
-                      <Input
-                        variant="borderless"
-                        value={comments[blog._id] || ""}
-                        onKeyDown={(e) => handleKeyDown(e, blog._id)}
-                        onChange={(e) =>
-                          handleCommentChange(blog._id, e.target.value)
-                        }
-                        className="w-full rounded-md mt-2 bg-slate-100"
-                        placeholder="Add comment"
-                      />
-                      <div
-                        className="mt-2 cursor-pointer"
-                        onClick={() =>
-                          handleCommentChange(blog._id, comments[blog._id])
-                        }
-                      >
-                        <SendIcon />
-                      </div>
-                    </div> */}
                   </Card>
                 ))}
+                
               </>
             ) : (
               <p className="col-span-12 flex justify-center">No Blogs</p>
